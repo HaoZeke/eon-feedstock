@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/TheochemUI/eOn/archive/refs/tags/v${{ version }}.tar.gz
-  sha256: ae8f9b991ae019d9befbade4624b9c1802c81861b1e987ae018c366b213e3263
+  sha256: 6c81d1666b9aeb5e1db8efe57e5d5f4c05f46f03eeb003eed70344d250b58e00
 
 build:
   number: 0
