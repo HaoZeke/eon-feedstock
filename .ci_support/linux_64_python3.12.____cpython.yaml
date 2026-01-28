@@ -28,6 +28,8 @@ liblapack:
 - 3.9.* *netlib
 liblapacke:
 - 3.9.* *netlib
+libtorch:
+- '2.9'
 numpy:
 - '2'
 pin_run_as_build:
