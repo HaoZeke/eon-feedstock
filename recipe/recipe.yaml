@@ -24,6 +24,7 @@ requirements:
     - cmake
     - ninja
     - meson
+    - pkg-config
     - sccache
     - if: (build_platform != target_platform)
       then:
