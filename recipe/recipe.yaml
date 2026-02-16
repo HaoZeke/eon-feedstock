@@ -10,17 +10,17 @@ source:
   sha256: 7d07eb7edfbd5bfb37d929b2ce91ce4592b254171479dab5278843ee97852cb9
   patches:
     - fix-datetime-utc-py310.patch
+    - fix-fortran-xtb-decouple.patch
 
 build:
-  number: 2
-  skip:
-    - win
+  number: 3
 requirements:
   build:
     - ${{ compiler('c') }}
     - ${{ stdlib('c') }}
     - ${{ compiler('cxx') }}
-    - ${{ compiler('fortran') }}
+    - if: not win
+      then: ${{ compiler('fortran') }}
     - cmake
     - ninja
     - meson
@@ -45,10 +45,18 @@ requirements:
     - libmetatensor-torch >=0.8,<0.9
     - xtb
     - eigen >=3.4,<3.5
-    - libblas
-    - libcblas
-    - liblapack
-    - liblapacke
+    - if: win
+      then:
+        - libblas * *mkl
+        - libcblas * *mkl
+        - liblapack * *mkl
+        - liblapacke * *mkl
+    - if: not win
+      then:
+        - libblas
+        - libcblas
+        - liblapack
+        - liblapacke
     - fmt
     - spdlog
     - if: osx
