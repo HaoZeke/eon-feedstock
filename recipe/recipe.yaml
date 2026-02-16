@@ -66,17 +66,21 @@ requirements:
       then: llvm-openmp
 
 tests:
-  - script:
-      - python -c "import eon"
-    requirements:
-      run:
-        - libtorch *cpu*
-  - script:
-      - eonclient -h
-      - eonclient --version
-    requirements:
-      run:
-        - libtorch *cpu*
+  - if: (build_platform == target_platform)
+    then:
+      script:
+        - python -c "import eon"
+      requirements:
+        run:
+          - libtorch *cpu*
+  - if: (build_platform == target_platform)
+    then:
+      script:
+        - eonclient -h
+        - eonclient --version
+      requirements:
+        run:
+          - libtorch *cpu*
 
 
 about:
