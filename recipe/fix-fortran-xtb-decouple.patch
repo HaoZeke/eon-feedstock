@@ -1,0 +1,39 @@
+diff --git a/client/meson.build b/client/meson.build
+--- a/client/meson.build
++++ b/client/meson.build
+@@ -5,7 +5,7 @@
+ cppc = meson.get_compiler('cpp')
+
+ use_fortran = false
+-if get_option('with_fortran') or get_option('with_xtb') or get_option(
++if get_option('with_fortran') or get_option(
+     'with_cuh2',
+ )
+     use_fortran = true
+@@ -325,12 +325,8 @@
+
+ if get_option('with_xtb')
+     # Try finding system 'xtb'.
+-    # If not found, look for 'xtb' in subprojects/ and use the 'xtb_dep_static' variable from it.
+-    xtb_dep = dependency(
+-        'xtb',
+-        required: true,
+-        fallback: ['xtb', 'xtb_dep_static'],
+-    )
++    # Do not use fallback for conda-forge builds where xtb is a pre-built package.
++    xtb_dep = dependency('xtb', required: true)
+
+     _deps += [xtb_dep]
+     subdir('potentials/XTBPot')
+@@ -433,7 +429,10 @@
+     lib_torch_list = ['c10', 'torch', 'torch_cpu', 'torch_global_deps']
+     tdeps = []
+     foreach lib_name : lib_torch_list
+-        tdeps += cppc.find_library(lib_name, dirs: [LIB_TORCH_LIB_PATH])
++        _lib = cppc.find_library(lib_name, dirs: [LIB_TORCH_LIB_PATH], required: false)
++        if _lib.found()
++            tdeps += _lib
++        endif
+     endforeach
+
+     torch_inc_args = []
