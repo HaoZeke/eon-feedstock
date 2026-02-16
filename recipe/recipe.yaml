@@ -54,7 +54,6 @@ requirements:
     - pyyaml
     - numpy
     - xtb
-    - eigen
     - fmt
     - spdlog
     - libmetatomic-torch >=0.1.7,<0.2
