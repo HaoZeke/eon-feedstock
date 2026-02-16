@@ -16,7 +16,10 @@ requirements:
     - ${{ compiler('c') }}
     - ${{ stdlib('c') }}
     - ${{ compiler('cxx') }}
-    - ${{ compiler('fortran') }}
+    - if: unix
+      then: ${{ compiler('fortran') }}
+    - if: win
+      then: ${{ compiler('m2w64_fortran') }}
     - cmake
     - ninja
     - meson
