@@ -1,16 +1,16 @@
 context:
-  version: "2.9.0"
+  version: "2.10.0"
 
 package:
   name: eon
   version: ${{ version }}
 
 source:
-  url: https://github.com/TheochemUI/eOn/releases/download/v${{ version }}/eon-v${{ version }}.tar.xz
-  sha256: dcaa7af1a020c3968bad022ac38b265a0410b4b1183c7058400cf6c29e67394e
+  url: https://github.com/TheochemUI/eOn/releases/download/v${{ version }}/eOn-${{ version }}.tar.gz
+  sha256: 7d07eb7edfbd5bfb37d929b2ce91ce4592b254171479dab5278843ee97852cb9
 
 build:
-  number: 1
+  number: 0
   skip:
     - win
 requirements:
@@ -41,6 +41,7 @@ requirements:
     - libtorch
     - libmetatomic-torch >=0.1.7,<0.2
     - libmetatensor-torch >=0.8,<0.9
+    - xtb
     - eigen >=3.4,<3.5
     - libblas
     - libcblas
@@ -54,7 +55,7 @@ requirements:
     - python
     - pyyaml
     - numpy
-    - eigen
+    - xtb
     - fmt
     - spdlog
     - libmetatomic-torch >=0.1.7,<0.2
@@ -64,12 +65,13 @@ requirements:
 
 tests:
   - script:
-      - python -c "import eon.server"
+      - python -c "import eon"
     requirements:
       run:
         - libtorch *cpu*
   - script:
       - eonclient -h
+      - eonclient --version
     requirements:
       run:
         - libtorch *cpu*
