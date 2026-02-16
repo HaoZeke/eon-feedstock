@@ -2,6 +2,11 @@
 
 set -o xtrace -o nounset -o pipefail -o errexit
 
+# Remove wrap files to prevent meson from building subprojects from source
+# All dependencies are provided by conda packages
+rm -f subprojects/xtb.wrap
+rm -f subprojects/vesin.wrap
+
 export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"
 if [[ $(uname) == "Linux" ]]; then
     # NOTE: force the linker to use the generic libtorch.so instead of
