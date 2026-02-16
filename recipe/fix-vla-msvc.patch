@@ -1,0 +1,20 @@
+diff --git a/client/potentials/XTBPot/XTBPot.cpp b/client/potentials/XTBPot/XTBPot.cpp
+--- a/client/potentials/XTBPot/XTBPot.cpp
++++ b/client/potentials/XTBPot/XTBPot.cpp
+@@ -12,6 +12,7 @@
+
+ #include "XTBPot.h"
+ #include <cstddef>
++#include <vector>
+
+ // Conversion factors
+ // const double angstromToBohr = 1.8897261349925714;
+@@ -32,7 +33,7 @@
+   double box_bohr[3 * 3];
+
+   // Allocate memory for converted positions
+-  double R_bohr[3 * N];
++  std::vector<double> R_bohr(3 * N);
+
+   // Convert positions from Angstrom to Bohr
+   for (long idx = 0; idx < 3 * N; ++idx) {

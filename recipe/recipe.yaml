@@ -11,6 +11,7 @@ source:
   patches:
     - fix-datetime-utc-py310.patch
     - fix-fortran-xtb-decouple.patch
+    - fix-vla-msvc.patch
 
 build:
   number: 3
