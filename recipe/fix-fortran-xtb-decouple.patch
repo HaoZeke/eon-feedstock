@@ -12,3 +12,16 @@ diff --git a/client/meson.build b/client/meson.build
  )
      use_fortran = true
      add_languages('fortran', required: true)
+@@ -326,10 +326,7 @@ endif
+ if get_option('with_xtb')
+     # Try finding system 'xtb'.
+-    # If not found, look for 'xtb' in subprojects/ and use the 'xtb_dep_static' variable from it.
+-    xtb_dep = dependency(
+-        'xtb',
+-        required: true,
+-        fallback: ['xtb', 'xtb_dep_static'],
+-    )
++    # Do not use fallback for conda-forge builds where xtb is a pre-built package.
++    xtb_dep = dependency('xtb', required: true)
+
+     _deps += [xtb_dep]
