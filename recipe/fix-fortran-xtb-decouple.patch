@@ -1,18 +1,17 @@
 diff --git a/client/meson.build b/client/meson.build
 --- a/client/meson.build
 +++ b/client/meson.build
-@@ -4,8 +4,8 @@ cc = meson.get_compiler('c')
+@@ -5,7 +5,7 @@
  cppc = meson.get_compiler('cpp')
 
  use_fortran = false
 -if get_option('with_fortran') or get_option('with_xtb') or get_option(
--    'with_cuh2',
 +if get_option('with_fortran') or get_option(
-+    'with_cuh2',
+     'with_cuh2',
  )
      use_fortran = true
-     add_languages('fortran', required: true)
-@@ -326,10 +326,7 @@ endif
+@@ -325,12 +325,8 @@
+
  if get_option('with_xtb')
      # Try finding system 'xtb'.
 -    # If not found, look for 'xtb' in subprojects/ and use the 'xtb_dep_static' variable from it.
@@ -25,7 +24,8 @@ diff --git a/client/meson.build b/client/meson.build
 +    xtb_dep = dependency('xtb', required: true)
 
      _deps += [xtb_dep]
-@@ -433,4 +430,7 @@ if get_option('with_torch')
+     subdir('potentials/XTBPot')
+@@ -433,7 +429,10 @@
      lib_torch_list = ['c10', 'torch', 'torch_cpu', 'torch_global_deps']
      tdeps = []
      foreach lib_name : lib_torch_list
@@ -35,3 +35,5 @@ diff --git a/client/meson.build b/client/meson.build
 +            tdeps += _lib
 +        endif
      endforeach
+
+     torch_inc_args = []
