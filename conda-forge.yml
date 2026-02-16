@@ -5,3 +5,8 @@ github:
 conda_build:
   error_overlinking: true
 conda_forge_output_validation: true
+provider:
+  linux_64: github_actions
+  osx_64: github_actions
+  osx_arm64: github_actions
+  win_64: github_actions
