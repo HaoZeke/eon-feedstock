@@ -10,22 +10,19 @@ diff --git a/client/meson.build b/client/meson.build
      'with_cuh2',
  )
      use_fortran = true
-@@ -325,12 +325,8 @@
+@@ -306,9 +306,8 @@
+ endif
 
  if get_option('with_xtb')
-     # Try finding system 'xtb'.
--    # If not found, look for 'xtb' in subprojects/ and use the 'xtb_dep_static' variable from it.
--    xtb_dep = dependency(
--        'xtb',
--        required: true,
--        fallback: ['xtb', 'xtb_dep_static'],
--    )
-+    # Do not use fallback for conda-forge builds where xtb is a pre-built package.
+-    xtb_proj = subproject('xtb')
+-    xtb_dep_static = xtb_proj.get_variable('xtb_dep_static')
+-    _deps += [xtb_dep_static]
 +    xtb_dep = dependency('xtb', required: true)
-
-     _deps += [xtb_dep]
++    _deps += [xtb_dep]
      subdir('potentials/XTBPot')
-@@ -433,7 +429,10 @@
+     potentials += xtb_eon
+     _args += ['-DWITH_XTB']
+@@ -409,7 +408,10 @@
      lib_torch_list = ['c10', 'torch', 'torch_cpu', 'torch_global_deps']
      tdeps = []
      foreach lib_name : lib_torch_list

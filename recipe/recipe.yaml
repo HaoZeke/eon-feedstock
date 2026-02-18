@@ -1,20 +1,22 @@
 context:
-  version: "2.10.0"
+  version: "2.10.1"
 
 package:
   name: eon
   version: ${{ version }}
 
 source:
-  url: https://github.com/TheochemUI/eOn/releases/download/v${{ version }}/eOn-${{ version }}.tar.gz
-  sha256: 7d07eb7edfbd5bfb37d929b2ce91ce4592b254171479dab5278843ee97852cb9
+  url: https://github.com/TheochemUI/eOn/releases/download/v${{ version }}/eon-v${{ version }}.tar.xz
+  sha256: dcaa7af1a020c3968bad022ac38b265a0410b4b1183c7058400cf6c29e67394e
   patches:
     - fix-datetime-utc-py310.patch
     - fix-fortran-xtb-decouple.patch
     - fix-vla-msvc.patch
 
 build:
-  number: 3
+  number: 0
+  skip:
+    - win
 requirements:
   build:
     - ${{ compiler('c') }}
