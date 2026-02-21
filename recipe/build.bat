@@ -10,6 +10,9 @@ dir /s "%LIBRARY_PREFIX%\*xtb*"
 dir /s "%LIBRARY_PREFIX%\*metatensor*"
 dir /s "%LIBRARY_PREFIX%\*metatomic*"
 dir /s "%LIBRARY_PREFIX%\*vesin*"
+dir "%LIBRARY_LIB%\*metatensor*"
+dir "%LIBRARY_LIB%\*metatomic*"
+dir "%LIBRARY_LIB%\*vesin*"
 
 :: Generate MSVC-compatible import library from MinGW-built xtb DLL
 :: The xtb conda package is built with m2w64 and only ships libxtb.dll.a
