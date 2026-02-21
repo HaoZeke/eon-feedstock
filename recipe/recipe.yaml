@@ -13,6 +13,7 @@ source:
     - fix-fortran-xtb-decouple.patch
     - fix-vla-msvc.patch
     - fix-libtorch-win.patch
+    - fix-metatensor-win.patch
 
 build:
   number: 1
@@ -45,6 +46,7 @@ requirements:
     - libtorch *cpu*
     - libtorch
     - libmetatomic-torch >=0.1.7,<0.2
+    - libmetatensor
     - libmetatensor-torch >=0.8,<0.9
     - xtb
     - eigen >=3.4,<3.5
