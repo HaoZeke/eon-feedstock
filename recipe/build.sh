@@ -19,6 +19,12 @@ rm -f subprojects/vesin.wrap
 rm -f subprojects/rgpot.wrap
 
 export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"
+for flag_var in CFLAGS CXXFLAGS FFLAGS FCFLAGS LDFLAGS; do
+    flag_value="${!flag_var:-}"
+    flag_value="${flag_value//-flto=auto/}"
+    export "${flag_var}=${flag_value}"
+done
+
 if [[ $(uname) == "Linux" ]]; then
     # NOTE: force the linker to use the generic libtorch.so instead of
     # libtorch_cpu.so allows switching to the CUDA version at runtime
@@ -40,6 +46,10 @@ EOF
 # shutil.copy2 step and fails otherwise. Download the subproject up front and
 # rewrite the copy path to honor CARGO_BUILD_TARGET when it is set.
 meson subprojects download readcon-core
+sed -i.bak \
+    -e "s|\\['-O3', '-flto=auto'\\]|['-O3']|" \
+    client/meson.build
+rm -f client/meson.build.bak
 sed -i.bak \
     -e 's|"/cargo-target/release/"|"/cargo-target/" + (__import__("os").environ.get("CARGO_BUILD_TARGET", "") + "/" if __import__("os").environ.get("CARGO_BUILD_TARGET") else "") + "release/"|' \
     subprojects/readcon-core/meson.build
