@@ -47,6 +47,10 @@ EOF
 # rewrite the copy path to honor CARGO_BUILD_TARGET when it is set.
 meson subprojects download readcon-core
 sed -i.bak \
+    -e "s|\\['-O3', '-flto=auto'\\]|['-O3']|" \
+    client/meson.build
+rm -f client/meson.build.bak
+sed -i.bak \
     -e 's|"/cargo-target/release/"|"/cargo-target/" + (__import__("os").environ.get("CARGO_BUILD_TARGET", "") + "/" if __import__("os").environ.get("CARGO_BUILD_TARGET") else "") + "release/"|' \
     subprojects/readcon-core/meson.build
 rm -f subprojects/readcon-core/meson.build.bak
