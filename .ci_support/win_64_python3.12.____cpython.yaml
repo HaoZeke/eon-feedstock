@@ -5,13 +5,13 @@ c_stdlib:
 capnproto:
 - 1.4.0
 channel_sources:
-- conda-forge
+- metatensor,conda-forge
 channel_targets:
-- conda-forge main
+- metatensor main
 cxx_compiler:
 - vs2022
 libtorch:
-- '2.9'
+- '2.10'
 numpy:
 - '2'
 pin_run_as_build:

@@ -1,3 +1,12 @@
 MACOSX_SDK_VERSION:
   - if: osx
     then: '11.0'
+
+channel_targets:
+  - metatensor main
+
+channel_sources:
+  - metatensor,conda-forge
+
+libtorch:
+  - '2.10'

@@ -16,7 +16,7 @@ source:
       - fix_capnpc.patch
 
 build:
-  number: 0
+  number: 1
 requirements:
   build:
     - ${{ compiler('c') }}
@@ -56,9 +56,9 @@ requirements:
     # with linker trick
     - libtorch *cpu*
     - libtorch
-    - libmetatomic-torch >=0.1.7,<0.2
-    - libmetatensor
-    - libmetatensor-torch >=0.8,<0.9
+    - libmetatomic-torch >=0.1.12.rc2,<0.2
+    - libmetatensor >=0.2.0.rc3,<0.3
+    - libmetatensor-torch >=0.9.0.rc5,<0.10
     - xtb
     - eigen >=3.4,<3.5
     - if: win
@@ -84,8 +84,9 @@ requirements:
     - xtb
     - quill
     - capnproto
-    - libmetatomic-torch >=0.1.7,<0.2
-    - libmetatensor-torch
+    - libmetatomic-torch >=0.1.12.rc2,<0.2
+    - libmetatensor >=0.2.0.rc3,<0.3
+    - libmetatensor-torch >=0.9.0.rc5,<0.10
     - if: osx
       then: llvm-openmp
 
