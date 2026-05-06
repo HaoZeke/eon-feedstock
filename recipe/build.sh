@@ -19,6 +19,12 @@ rm -f subprojects/vesin.wrap
 rm -f subprojects/rgpot.wrap
 
 export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"
+for flag_var in CFLAGS CXXFLAGS FFLAGS FCFLAGS LDFLAGS; do
+    flag_value="${!flag_var:-}"
+    flag_value="${flag_value//-flto=auto/}"
+    export "${flag_var}=${flag_value}"
+done
+
 if [[ $(uname) == "Linux" ]]; then
     # NOTE: force the linker to use the generic libtorch.so instead of
     # libtorch_cpu.so allows switching to the CUDA version at runtime
