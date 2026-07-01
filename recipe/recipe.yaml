@@ -7,7 +7,7 @@ package:
 
 # Zero eOn-side patches: upstream eOn (next tag after #363) prefers pkg-config
 # readcon-core and uses the >=0.13 builder API. Zero readcon tar/zip sources
-# in this feedstock: depend on libreadcon-core from conda-forge. Zero rgpot
+# in this feedstock: depend on readcon-core from conda-forge. Zero rgpot
 # patches: use OmniPotentRPC/rgpot >=1.2.0 which ships capnp .cpp rename.
 source:
   - url: https://github.com/TheochemUI/eOn/releases/download/v${{ version }}/eon-v${{ version }}.tar.xz
@@ -51,8 +51,8 @@ requirements:
     - libmetatensor-torch >=0.8,<0.9
     - xtb
     - eigen >=3.4,<3.5
-    # Prebuilt C-API from conda-forge (see readcon-core-feedstock); no vendor tarball.
-    - libreadcon-core >=0.13
+    # Prebuilt C-API from conda-forge (see conda-forge readcon-core package); no vendor tarball.
+    - readcon-core >=0.13
     - if: win
       then:
         - libblas * *mkl
@@ -78,7 +78,7 @@ requirements:
     - capnproto
     - libmetatomic-torch >=0.1.7,<0.2
     - libmetatensor-torch
-    - libreadcon-core >=0.13
+    - readcon-core >=0.13
     - if: osx
       then: llvm-openmp
 
@@ -110,7 +110,7 @@ about:
     The EON software package contains algorithms used primarily to model the
     evolution of atomic scale systems over long time scales. This version is
     built with metatomic, xtb, and serve mode support. readcon-core is linked
-    from the libreadcon-core conda package (not vendored in this feedstock).
+    from the readcon-core conda package (not vendored in this feedstock).
   documentation: https://eondocs.org/index.html
   repository: https://github.com/TheochemUI/eOn
 
