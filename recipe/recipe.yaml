@@ -6,7 +6,7 @@ package:
   version: ${{ version }}
 
 # Zero eOn-side patches: upstream eOn (next tag after #363) prefers pkg-config
-# readcon-core and uses the >=0.12 builder API. Zero readcon tar/zip sources
+# readcon-core and uses the >=0.13 builder API. Zero readcon tar/zip sources
 # in this feedstock: depend on libreadcon-core from conda-forge. Zero rgpot
 # patches: use OmniPotentRPC/rgpot >=1.2.0 which ships capnp .cpp rename.
 source:
@@ -52,7 +52,7 @@ requirements:
     - xtb
     - eigen >=3.4,<3.5
     # Prebuilt C-API from conda-forge (see readcon-core-feedstock); no vendor tarball.
-    - libreadcon-core >=0.12
+    - libreadcon-core >=0.13
     - if: win
       then:
         - libblas * *mkl
@@ -78,7 +78,7 @@ requirements:
     - capnproto
     - libmetatomic-torch >=0.1.7,<0.2
     - libmetatensor-torch
-    - libreadcon-core >=0.12
+    - libreadcon-core >=0.13
     - if: osx
       then: llvm-openmp
 
