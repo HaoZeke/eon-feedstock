@@ -5,48 +5,27 @@ package:
   name: eon
   version: ${{ version }}
 
+# Zero eOn-side patches: upstream eOn (next tag after #363) prefers pkg-config
+# readcon-core and uses the >=0.12 builder API. Zero readcon tar/zip sources
+# in this feedstock: depend on libreadcon-core from conda-forge. Zero rgpot
+# patches: use OmniPotentRPC/rgpot >=1.2.0 which ships capnp .cpp rename.
 source:
   - url: https://github.com/TheochemUI/eOn/releases/download/v${{ version }}/eon-v${{ version }}.tar.xz
-    # Published asset from TheochemUI/eOn v2.15.0 release.yml (git archive tarball).
+    # Update sha256 when the next release asset is published (placeholder for 2.15.0 until retag).
     sha256: d4695f81ffd7a1c729f48b5c42737d381c686c79ca63ca95769f31415a3798b7
-    # v2.15.0+ ships runtime-loadable Fortran pots (#342); fix_win_cuh2_potinit was v2.14.0-only.
-    patches:
-      # Prefer cargo-c/pkg-config readcon-core over meson subproject (offline builds);
-      # adapt ConFileIO for readcon-core 0.12 builder API (add_atom + set_atom_velocity).
-      - use_readcon_pkgconfig.patch
-  - url: https://github.com/OmniPotentRPC/rgpot/archive/refs/tags/v1.0.3.tar.gz
-    sha256: b46d9d6ecb0d47c621d7ec6051c19025d3254b366d4c98232168f74b75c0f7da
+  - url: https://github.com/OmniPotentRPC/rgpot/archive/refs/tags/v1.2.0.tar.gz
+    sha256: 9a4cd4b204029764a568fc92e3d2b0d025db216d595df5e5655eb1e358f953bb
     target_directory: subprojects/rgpot
-    patches:
-      - fix_capnpc.patch
-  # readcon-core C-API built offline via cargo-c (not meson subproject download).
-  - url: https://github.com/lode-org/readcon-core/archive/refs/tags/v0.12.0.tar.gz
-    sha256: 83bf67c646e69c5382ce641d8efd578dc304764fa66cb54c949e2e0273b97c0b
-    target_directory: readcon-core-src
-  # Pre-vendored crates.io deps for readcon-core (generated with cargo vendor; no network in build).
-  - path: readcon-vendor.tar.xz
-    sha256: 7f6da02a56244b26b36046761e8119352cb297e208cfa8ec0931386d76121198
-    target_directory: readcon-vendor
 
 build:
-  # Windows (issue #15): IN-TREE Fortran via compiler('fortran') + build.bat
-  # -Dwith_fortran=true -Dwith_cuh2=true. build.bat forces MSVC AR=lib (not llvm-ar from flang).
   number: 0
+
 requirements:
   build:
     - ${{ compiler('c') }}
     - ${{ stdlib('c') }}
     - ${{ compiler('cxx') }}
-    # win-64: flang (conda-forge) or gfortran; C++/link stay MSVC; AR=lib in build.bat
-    # (issue #15 in-tree pots — see build.bat + rgoswami.me/posts/windows-compat-sci-cpp/)
     - ${{ compiler('fortran') }}
-    # readcon-core C-API is built offline with cargo-c from vendored sources
-    # (recipe/readcon-vendor.tar.xz); headers/libs are resolved via pkg-config.
-    - ${{ compiler('rust') }}
-    - cargo-c
-    # Required by conda-forge policy for Rust packages: bundle the licenses
-    # of every transitive Rust dependency into THIRDPARTY.yml (offline via vendor).
-    - cargo-bundle-licenses
     - cmake
     - ninja
     - meson
@@ -65,8 +44,6 @@ requirements:
     - numpy
     - pyyaml
     - setuptools
-    # build against CPU, CUDA at runtime
-    # with linker trick
     - libtorch *cpu*
     - libtorch
     - libmetatomic-torch >=0.1.7,<0.2
@@ -74,6 +51,8 @@ requirements:
     - libmetatensor-torch >=0.8,<0.9
     - xtb
     - eigen >=3.4,<3.5
+    # Prebuilt C-API from conda-forge (see readcon-core-feedstock); no vendor tarball.
+    - libreadcon-core >=0.12
     - if: win
       then:
         - libblas * *mkl
@@ -99,6 +78,7 @@ requirements:
     - capnproto
     - libmetatomic-torch >=0.1.7,<0.2
     - libmetatensor-torch
+    - libreadcon-core >=0.12
     - if: osx
       then: llvm-openmp
 
@@ -115,26 +95,22 @@ tests:
       script:
         - eonclient -h
         - eonclient --version
-        # Windows builds are static + no in-tree Fortran; binary must still run.
         - python -c "import eon; import sys; print('eon ok', sys.platform)"
       requirements:
         run:
           - libtorch *cpu*
-
 
 about:
   homepage: https://eondocs.org/
   license: BSD-3-Clause
   license_file:
     - LICENSE
-    # Bundled licenses for every Rust crate transitively pulled in by
-    # readcon-core; generated offline by cargo-bundle-licenses in build.sh/bat.
-    - readcon-THIRDPARTY.yml
   summary: "Algorithms for long time scales and potential energy surface exploration"
   description: |
     The EON software package contains algorithms used primarily to model the
     evolution of atomic scale systems over long time scales. This version is
-    built with metatomic, xtb, and serve mode support.
+    built with metatomic, xtb, and serve mode support. readcon-core is linked
+    from the libreadcon-core conda package (not vendored in this feedstock).
   documentation: https://eondocs.org/index.html
   repository: https://github.com/TheochemUI/eOn
 
