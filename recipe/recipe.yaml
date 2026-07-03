@@ -1,5 +1,5 @@
 context:
-  version: "2.15.0"
+  version: "2.16.0"
 
 package:
   name: eon
@@ -7,25 +7,21 @@ package:
 
 source:
   - url: https://github.com/TheochemUI/eOn/releases/download/v${{ version }}/eon-v${{ version }}.tar.xz
-    # Published asset from TheochemUI/eOn v2.15.0 release.yml (git archive tarball).
-    sha256: d4695f81ffd7a1c729f48b5c42737d381c686c79ca63ca95769f31415a3798b7
-    # v2.15.0+ ships runtime-loadable Fortran pots (#342); fix_win_cuh2_potinit was v2.14.0-only.
-    patches:
-      # Prefer cargo-c/pkg-config readcon-core over meson subproject (offline builds);
-      # adapt ConFileIO for readcon-core 0.12 builder API (add_atom + set_atom_velocity).
-      - use_readcon_pkgconfig.patch
-  - url: https://github.com/OmniPotentRPC/rgpot/archive/refs/tags/v1.0.3.tar.gz
-    sha256: b46d9d6ecb0d47c621d7ec6051c19025d3254b366d4c98232168f74b75c0f7da
+    # Published asset from TheochemUI/eOn v2.16.0 release.yml (git archive tarball).
+    sha256: FILLME_EON_TARBALL_SHA256
+    # v2.16.0 targets readcon-core 0.13 in-tree (IoStatus API); the 0.12
+    # builder-API patch (use_readcon_pkgconfig.patch) is upstream and dropped.
+  - url: https://github.com/OmniPotentRPC/rgpot/archive/refs/tags/v2.1.0.tar.gz
+    sha256: FILLME_RGPOT_TARBALL_SHA256
     target_directory: subprojects/rgpot
-    patches:
-      - fix_capnpc.patch
+    # rgpot >=1.2.0 renames the generated capnp sources; fix_capnpc.patch dropped.
   # readcon-core C-API built offline via cargo-c (not meson subproject download).
-  - url: https://github.com/lode-org/readcon-core/archive/refs/tags/v0.12.0.tar.gz
-    sha256: 83bf67c646e69c5382ce641d8efd578dc304764fa66cb54c949e2e0273b97c0b
+  - url: https://github.com/lode-org/readcon-core/archive/refs/tags/v0.13.1.tar.gz
+    sha256: a261e69b87228dcc8f161eef800590b0395b4c93605b838c6216d40a1780f0bf
     target_directory: readcon-core-src
   # Pre-vendored crates.io deps for readcon-core (generated with cargo vendor; no network in build).
   - path: readcon-vendor.tar.xz
-    sha256: 7f6da02a56244b26b36046761e8119352cb297e208cfa8ec0931386d76121198
+    sha256: bb5d419fa8e6d4bb41649b0efde28de12966b0dc1ddc13ed5247333e96646c58
     target_directory: readcon-vendor
 
 build:

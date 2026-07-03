@@ -122,6 +122,7 @@ meson setup -Dpython.install_env=prefix \
     -Dwith_metatomic=True \
     -Dwith_xtb=True \
     -Dwith_serve=True \
+    -Dwith_rgpot=True \
     -Dpip_metatomic=False \
     -Dtorch_path="${PREFIX}" \
     -Dcpp_link_args="${LDFLAGS}" \
