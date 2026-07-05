@@ -8,7 +8,7 @@ package:
 source:
   - url: https://github.com/TheochemUI/eOn/releases/download/v${{ version }}/eon-v${{ version }}.tar.xz
     # Published asset from TheochemUI/eOn v2.16.0 release.yml (git archive tarball).
-    sha256: FILLME_EON_TARBALL_SHA256
+    sha256: 3518300c5e906b8a06de8d9231a14e8896e6a7cde97cb24adc4b7c6925a37c9b
     # v2.16.0 targets readcon-core 0.13 in-tree (IoStatus API); the 0.12
     # builder-API patch (use_readcon_pkgconfig.patch) is upstream and dropped.
   - url: https://github.com/OmniPotentRPC/rgpot/archive/refs/tags/v2.1.0.tar.gz
