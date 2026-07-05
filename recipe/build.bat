@@ -10,56 +10,7 @@
 ::   - MinGW-built xtb: generate MSVC import lib from DLL exports (ABI boundary)
 ::   - Stack: meson sets /STACK:16777216 for MSVC link (Windows 1 MB default overflows
 ::     legacy Fortran stack arrays; Linux default is 8 MB)
-:: readcon-core: offline cargo-c + vendored crates (no crates.io / github during build).
-
-set "CARGO_NET_OFFLINE=true"
-set "CARGO_HOME=%SRC_DIR%\.cargo-home"
-if not exist "%CARGO_HOME%" mkdir "%CARGO_HOME%"
-if not exist "%SRC_DIR%\readcon-vendor" (
-    echo ERROR: readcon-vendor not found under %SRC_DIR%
-    exit 1
-)
-if not exist "%SRC_DIR%\readcon-core-src" (
-    echo ERROR: readcon-core-src not found under %SRC_DIR%
-    exit 1
-)
-set "READCON_SRC=%SRC_DIR%\readcon-core-src"
-if not exist "%READCON_SRC%\Cargo.toml" (
-    for /d %%D in ("%SRC_DIR%\readcon-core-src\readcon-core-*") do (
-        if exist "%%D\Cargo.toml" set "READCON_SRC=%%D"
-    )
-)
-if not exist "%READCON_SRC%\Cargo.toml" (
-    echo ERROR: readcon-core Cargo.toml not found
-    exit 1
-)
-
-:: Write cargo offline config with absolute vendor path (Windows backslashes -> forward).
-set "READCON_VENDOR=%SRC_DIR%\readcon-vendor"
-set "READCON_VENDOR=%READCON_VENDOR:\=/%"
-> "%CARGO_HOME%\config.toml" (
-    echo [source.crates-io]
-    echo replace-with = "vendored-sources"
-    echo.
-    echo [source.vendored-sources]
-    echo directory = "%READCON_VENDOR%"
-    echo.
-    echo [net]
-    echo offline = true
-)
-
-pushd "%READCON_SRC%"
-copy /Y "%RECIPE_DIR%\readcon-core-Cargo.lock" Cargo.lock >nul
-cargo-bundle-licenses --format yaml --output "%SRC_DIR%\readcon-THIRDPARTY.yml"
-if errorlevel 1 (popd & exit 1)
-:: Install into LIBRARY_PREFIX so runtime DLLs ship with the package.
-if defined CARGO_BUILD_TARGET (
-    cargo cinstall --offline --locked --release --target "%CARGO_BUILD_TARGET%" --prefix "%LIBRARY_PREFIX%" --libdir lib --includedir include --pkgconfigdir lib/pkgconfig
-) else (
-    cargo cinstall --offline --locked --release --prefix "%LIBRARY_PREFIX%" --libdir lib --includedir include --pkgconfigdir lib/pkgconfig
-)
-if errorlevel 1 (popd & exit 1)
-popd
+:: readcon-core comes from the readcon-core feedstock; meson resolves it via pkg-config.
 
 set "PKG_CONFIG_PATH=%LIBRARY_LIB%\pkgconfig;%PKG_CONFIG_PATH%"
 set "LIB=%LIBRARY_LIB%;%LIB%"
@@ -151,5 +102,3 @@ if errorlevel 1 exit 1
 
 meson install -C build
 if errorlevel 1 exit 1
-
-:: readcon DLLs/libs already under LIBRARY_PREFIX via cargo cinstall.

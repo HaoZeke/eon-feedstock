@@ -15,14 +15,6 @@ source:
     sha256: 164d7bd06692ddd6b909b03e6e88673680d9502eaac00d7ba51b2c429f62324a
     target_directory: subprojects/rgpot
     # rgpot >=1.2.0 renames the generated capnp sources; fix_capnpc.patch dropped.
-  # readcon-core C-API built offline via cargo-c (not meson subproject download).
-  - url: https://github.com/lode-org/readcon-core/archive/refs/tags/v0.13.1.tar.gz
-    sha256: a261e69b87228dcc8f161eef800590b0395b4c93605b838c6216d40a1780f0bf
-    target_directory: readcon-core-src
-  # Pre-vendored crates.io deps for readcon-core (generated with cargo vendor; no network in build).
-  - path: readcon-vendor.tar.xz
-    sha256: bb5d419fa8e6d4bb41649b0efde28de12966b0dc1ddc13ed5247333e96646c58
-    target_directory: readcon-vendor
 
 build:
   # Windows (issue #15): IN-TREE Fortran via compiler('fortran') + build.bat
@@ -36,13 +28,6 @@ requirements:
     # win-64: flang (conda-forge) or gfortran; C++/link stay MSVC; AR=lib in build.bat
     # (issue #15 in-tree pots — see build.bat + rgoswami.me/posts/windows-compat-sci-cpp/)
     - ${{ compiler('fortran') }}
-    # readcon-core C-API is built offline with cargo-c from vendored sources
-    # (recipe/readcon-vendor.tar.xz); headers/libs are resolved via pkg-config.
-    - ${{ compiler('rust') }}
-    - cargo-c
-    # Required by conda-forge policy for Rust packages: bundle the licenses
-    # of every transitive Rust dependency into THIRDPARTY.yml (offline via vendor).
-    - cargo-bundle-licenses
     - cmake
     - ninja
     - meson
@@ -70,6 +55,9 @@ requirements:
     - libmetatensor-torch >=0.8,<0.9
     - xtb
     - eigen >=3.4,<3.5
+    # eOn's meson resolves readcon-core via pkg-config; run pin comes from the
+    # readcon-core feedstock run_exports.
+    - readcon-core >=0.13.1,<0.14
     - if: win
       then:
         - libblas * *mkl
@@ -123,9 +111,6 @@ about:
   license: BSD-3-Clause
   license_file:
     - LICENSE
-    # Bundled licenses for every Rust crate transitively pulled in by
-    # readcon-core; generated offline by cargo-bundle-licenses in build.sh/bat.
-    - readcon-THIRDPARTY.yml
   summary: "Algorithms for long time scales and potential energy surface exploration"
   description: |
     The EON software package contains algorithms used primarily to model the
