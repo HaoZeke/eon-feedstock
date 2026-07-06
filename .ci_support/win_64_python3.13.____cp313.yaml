@@ -11,7 +11,7 @@ channel_targets:
 cxx_compiler:
 - vs2022
 libtorch:
-- '2.9'
+- '2.12'
 numpy:
 - '2'
 pin_run_as_build:
