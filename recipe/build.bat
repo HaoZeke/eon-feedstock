@@ -109,6 +109,23 @@ if not defined FLANG_RT_DIR (
     )
 )
 
+:: Cap'n Proto on MSVC: windows.h / RPC headers define `interface` as a macro,
+:: which corrupts capnp templates (cascade errors citing IPrintDialogServices).
+:: Force-include a tiny guard before every TU so rgpot/eOn RPC sources build.
+> "%SRC_DIR%\msvc_capnp_guard.h" (
+  echo #pragma once
+  echo #ifndef NOMINMAX
+  echo #define NOMINMAX
+  echo #endif
+  echo #ifdef interface
+  echo #undef interface
+  echo #endif
+)
+:: /FI wants a path without spaces issues; use short-style via pushd and relative.
+:: Forward slashes work with cl.exe force-include.
+set "MSVC_CAPNP_GUARD=%SRC_DIR:\=/%/msvc_capnp_guard.h"
+set "CXXFLAGS=%CXXFLAGS% /FI%MSVC_CAPNP_GUARD% /DNOMINMAX /DWIN32_LEAN_AND_MEAN"
+
 :: In-tree Fortran ON including CuH2 (issue #15). Static default-library; MSVC AR above.
 meson setup -Dpython.install_env=prefix ^
     --prefix="%PREFIX%" ^
