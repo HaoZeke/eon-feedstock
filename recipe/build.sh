@@ -2,17 +2,10 @@
 
 set -o xtrace -o nounset -o pipefail -o errexit
 
-# Offline readcon-core C-API via cargo-c + vendored crates (no crates.io / github).
-# Vendor tree is extracted from recipe/readcon-vendor.tar.xz into $SRC_DIR/readcon-vendor.
-export CARGO_NET_OFFLINE=true
+# readcon-core C-API via cargo-c; crate deps resolve from crates.io pinned by
+# the upstream Cargo.lock (same pattern as the readcon-core staged recipe).
 export CARGO_HOME="${SRC_DIR}/.cargo-home"
 mkdir -p "${CARGO_HOME}"
-cp -f "${RECIPE_DIR}/readcon-cargo-config/config.toml" "${CARGO_HOME}/config.toml"
-# cargo config directory path is relative to the readcon-core crate root.
-if [[ ! -d "${SRC_DIR}/readcon-vendor" ]]; then
-    echo "ERROR: readcon-vendor not found under ${SRC_DIR}; recipe source missing?" >&2
-    exit 1
-fi
 
 # Remove wrap files to prevent meson from building subprojects from source.
 # All dependencies are provided by conda packages; readcon-core is prebuilt via cargo-c.
@@ -45,26 +38,12 @@ if [[ ! -f "${READCON_SRC}/Cargo.toml" ]]; then
     exit 1
 fi
 
-# Point the vendored-sources directory at the absolute vendor path (config.toml uses a relative name).
-cat > "${CARGO_HOME}/config.toml" <<EOF
-[source.crates-io]
-replace-with = "vendored-sources"
-
-[source.vendored-sources]
-directory = "${SRC_DIR}/readcon-vendor"
-
-[net]
-offline = true
-EOF
-
 # Install C API directly into $PREFIX so dylib install names live under the conda
 # prefix (conda-build can rewrite them on package). A side readcon-prefix left
 # absolute paths that survived into the test env (osx_64 dyld abort).
 (
     cd "${READCON_SRC}"
-    # Lockfile must match the pre-vendored crate set shipped in readcon-vendor.tar.xz.
-    cp -f "${RECIPE_DIR}/readcon-core-Cargo.lock" Cargo.lock
-    # License bundle for every transitive Rust dep (conda-forge policy); offline via vendor.
+    # License bundle for every transitive Rust dep (conda-forge policy).
     cargo-bundle-licenses --format yaml --output "${SRC_DIR}/readcon-THIRDPARTY.yml"
     # conda-forge rust activation sets CARGO_BUILD_TARGET even on native builds; cargo-c
     # then looks for target/<triple>/release/*.pc while cargo wrote target/release/ (host).
@@ -76,7 +55,6 @@ EOF
         unset CARGO_BUILD_TARGET
     fi
     cargo cinstall \
-        --offline \
         --locked \
         --release \
         ${cinstall_extra[@]+"${cinstall_extra[@]}"} \
@@ -122,6 +100,7 @@ meson setup -Dpython.install_env=prefix \
     -Dwith_metatomic=True \
     -Dwith_xtb=True \
     -Dwith_serve=True \
+    -Dwith_rgpot=True \
     -Dpip_metatomic=False \
     -Dtorch_path="${PREFIX}" \
     -Dcpp_link_args="${LDFLAGS}" \

@@ -10,15 +10,10 @@
 ::   - MinGW-built xtb: generate MSVC import lib from DLL exports (ABI boundary)
 ::   - Stack: meson sets /STACK:16777216 for MSVC link (Windows 1 MB default overflows
 ::     legacy Fortran stack arrays; Linux default is 8 MB)
-:: readcon-core: offline cargo-c + vendored crates (no crates.io / github during build).
+:: readcon-core: cargo-c with lock-pinned crates.io deps (staged-recipe pattern).
 
-set "CARGO_NET_OFFLINE=true"
 set "CARGO_HOME=%SRC_DIR%\.cargo-home"
 if not exist "%CARGO_HOME%" mkdir "%CARGO_HOME%"
-if not exist "%SRC_DIR%\readcon-vendor" (
-    echo ERROR: readcon-vendor not found under %SRC_DIR%
-    exit 1
-)
 if not exist "%SRC_DIR%\readcon-core-src" (
     echo ERROR: readcon-core-src not found under %SRC_DIR%
     exit 1
@@ -34,29 +29,14 @@ if not exist "%READCON_SRC%\Cargo.toml" (
     exit 1
 )
 
-:: Write cargo offline config with absolute vendor path (Windows backslashes -> forward).
-set "READCON_VENDOR=%SRC_DIR%\readcon-vendor"
-set "READCON_VENDOR=%READCON_VENDOR:\=/%"
-> "%CARGO_HOME%\config.toml" (
-    echo [source.crates-io]
-    echo replace-with = "vendored-sources"
-    echo.
-    echo [source.vendored-sources]
-    echo directory = "%READCON_VENDOR%"
-    echo.
-    echo [net]
-    echo offline = true
-)
-
 pushd "%READCON_SRC%"
-copy /Y "%RECIPE_DIR%\readcon-core-Cargo.lock" Cargo.lock >nul
 cargo-bundle-licenses --format yaml --output "%SRC_DIR%\readcon-THIRDPARTY.yml"
 if errorlevel 1 (popd & exit 1)
 :: Install into LIBRARY_PREFIX so runtime DLLs ship with the package.
 if defined CARGO_BUILD_TARGET (
-    cargo cinstall --offline --locked --release --target "%CARGO_BUILD_TARGET%" --prefix "%LIBRARY_PREFIX%" --libdir lib --includedir include --pkgconfigdir lib/pkgconfig
+    cargo cinstall --locked --release --target "%CARGO_BUILD_TARGET%" --prefix "%LIBRARY_PREFIX%" --libdir lib --includedir include --pkgconfigdir lib/pkgconfig
 ) else (
-    cargo cinstall --offline --locked --release --prefix "%LIBRARY_PREFIX%" --libdir lib --includedir include --pkgconfigdir lib/pkgconfig
+    cargo cinstall --locked --release --prefix "%LIBRARY_PREFIX%" --libdir lib --includedir include --pkgconfigdir lib/pkgconfig
 )
 if errorlevel 1 (popd & exit 1)
 popd
@@ -128,6 +108,23 @@ if not defined FLANG_RT_DIR (
         )
     )
 )
+
+:: Cap'n Proto on MSVC: windows.h / RPC headers define `interface` as a macro,
+:: which corrupts capnp templates (cascade errors citing IPrintDialogServices).
+:: Force-include a tiny guard before every TU so rgpot/eOn RPC sources build.
+> "%SRC_DIR%\msvc_capnp_guard.h" (
+  echo #pragma once
+  echo #ifndef NOMINMAX
+  echo #define NOMINMAX
+  echo #endif
+  echo #ifdef interface
+  echo #undef interface
+  echo #endif
+)
+:: /FI wants a path without spaces issues; use short-style via pushd and relative.
+:: Forward slashes work with cl.exe force-include.
+set "MSVC_CAPNP_GUARD=%SRC_DIR:\=/%/msvc_capnp_guard.h"
+set "CXXFLAGS=%CXXFLAGS% /FI%MSVC_CAPNP_GUARD% /DNOMINMAX /DWIN32_LEAN_AND_MEAN"
 
 :: In-tree Fortran ON including CuH2 (issue #15). Static default-library; MSVC AR above.
 meson setup -Dpython.install_env=prefix ^
