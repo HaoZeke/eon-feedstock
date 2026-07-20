@@ -143,6 +143,14 @@ if exist "%LIBRARY_LIB%\metatomic_torch.lib" (
     if not exist "%LIBRARY_LIB%\libmetatomic_torch.lib" copy /Y "%LIBRARY_LIB%\metatomic_torch.lib" "%LIBRARY_LIB%\libmetatomic_torch.lib" >nul
 )
 
+:: MetatomicEngineAbiTest.cpp includes <dlfcn.h> (POSIX-only). Skip that one unit
+:: test on MSVC; production code uses client/DynLib.h which already has LoadLibrary.
+:: Upstream will rewrite the test; this keeps win-64 packages green for 2.17.10.
+if exist "client\meson.build" (
+    findstr /v /c:"test_mta_engine_abi" "client\meson.build" > "client\meson.build.win"
+    move /Y "client\meson.build.win" "client\meson.build" >nul
+)
+
 :: In-tree Fortran ON including CuH2 (issue #15). Static default-library; MSVC AR above.
 meson setup -Dpython.install_env=prefix ^
     --prefix="%PREFIX%" ^
