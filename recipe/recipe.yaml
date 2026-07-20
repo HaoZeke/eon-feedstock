@@ -12,7 +12,7 @@ source:
     # v2.16.0 targets readcon-core 0.13 in-tree (IoStatus API); the 0.12
     # builder-API patch (use_readcon_pkgconfig.patch) is upstream and dropped.
   - url: https://github.com/OmniPotentRPC/rgpot/archive/refs/tags/v2.5.3.tar.gz
-    sha256: 200391c52089701c6d60201819ebad67b51518843151fb7a888d25558758a369
+    sha256: 391c52089701c6d60201819ebad67b51518843151fb7a888d25558758a369474
     target_directory: subprojects/rgpot
     # rgpot >=1.2.0 renames the generated capnp sources; fix_capnpc.patch dropped.
     # rgpot >=2.5.2 engines match vesin 0.6 VesinOptions; v2.5.3 packaging fixes.
