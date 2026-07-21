@@ -9,6 +9,10 @@ source:
   - url: https://github.com/TheochemUI/eOn/releases/download/v${{ version }}/eon-v${{ version }}.tar.xz
     # Published asset from TheochemUI/eOn v2.17.10 (release.yml fat tarball).
     sha256: d0ade2df269eaae6cb20dbe074ddd7c87ed81458ae9ef6a54d0fe0fbb07ba997
+    # MetatomicEngineAbiTest: use DynLib (MSVC LoadLibrary) instead of raw dlfcn.h.
+    # Upstream main has this; 2.17.10 tarball does not yet.
+    patches:
+      - 0001-MetatomicEngineAbiTest-DynLib.patch
     # v2.16.0 targets readcon-core 0.13 in-tree (IoStatus API); the 0.12
     # builder-API patch (use_readcon_pkgconfig.patch) is upstream and dropped.
   - url: https://github.com/OmniPotentRPC/rgpot/archive/refs/tags/v2.5.3.tar.gz
@@ -26,7 +30,8 @@ source:
 build:
   # Windows (issue #15): IN-TREE Fortran via compiler('fortran') + build.bat
   # -Dwith_fortran=true -Dwith_cuh2=true. build.bat forces MSVC AR=lib (not llvm-ar from flang).
-  number: 0
+  # build 1: DynLib rewrite of MetatomicEngineAbiTest (no MSVC test skip).
+  number: 1
 requirements:
   build:
     - ${{ compiler('c') }}
