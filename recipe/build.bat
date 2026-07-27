@@ -126,6 +126,23 @@ if not defined FLANG_RT_DIR (
 set "MSVC_CAPNP_GUARD=%SRC_DIR:\=/%/msvc_capnp_guard.h"
 set "CXXFLAGS=%CXXFLAGS% /FI%MSVC_CAPNP_GUARD% /DNOMINMAX /DWIN32_LEAN_AND_MEAN"
 
+:: MSVC import-lib name aliases for meson find_library.
+:: conda-forge libmetatensor ships Library/lib/metatensor.dll.lib (not metatensor.lib /
+:: libmetatensor.lib). libmetatensor-torch / libmetatomic-torch ship bare *.lib names.
+:: eOn client/meson.build Windows fallback looks for libmetatensor / libmetatensor_torch /
+:: libmetatomic_torch (see _ms_lib = is_windows ? 'lib' : ''). Mirror those names so the
+:: fallback (and bare find_library) can succeed when pkg-config/cmake miss.
+if exist "%LIBRARY_LIB%\metatensor.dll.lib" (
+    if not exist "%LIBRARY_LIB%\metatensor.lib" copy /Y "%LIBRARY_LIB%\metatensor.dll.lib" "%LIBRARY_LIB%\metatensor.lib" >nul
+    if not exist "%LIBRARY_LIB%\libmetatensor.lib" copy /Y "%LIBRARY_LIB%\metatensor.dll.lib" "%LIBRARY_LIB%\libmetatensor.lib" >nul
+)
+if exist "%LIBRARY_LIB%\metatensor_torch.lib" (
+    if not exist "%LIBRARY_LIB%\libmetatensor_torch.lib" copy /Y "%LIBRARY_LIB%\metatensor_torch.lib" "%LIBRARY_LIB%\libmetatensor_torch.lib" >nul
+)
+if exist "%LIBRARY_LIB%\metatomic_torch.lib" (
+    if not exist "%LIBRARY_LIB%\libmetatomic_torch.lib" copy /Y "%LIBRARY_LIB%\metatomic_torch.lib" "%LIBRARY_LIB%\libmetatomic_torch.lib" >nul
+)
+
 :: In-tree Fortran ON including CuH2 (issue #15). Static default-library; MSVC AR above.
 meson setup -Dpython.install_env=prefix ^
     --prefix="%PREFIX%" ^
