@@ -90,6 +90,19 @@ if errorlevel 1 (
     exit 1
 )
 
+:: flang/clang activation injects GNU -Wl,defaultlib:.../clang_rt.builtins-*.lib
+:: into LDFLAGS. Meson 1.12 feeds LDFLAGS into the cl.exe sanity check, which
+:: then dies with D8021 (invalid numeric argument /Wl,...). Clear GNU LDFLAGS
+:: and expose the builtins import lib via MSVC LIBPATH instead.
+for /d %%D in ("%BUILD_PREFIX%\lib\clang\*" "%LIBRARY_PREFIX%\lib\clang\*") do (
+    if exist "%%D\lib\windows\clang_rt.builtins-x86_64.lib" (
+        set "LIB=%%D\lib\windows;%LIB%"
+        echo Using clang_rt builtins LIBPATH: %%D\lib\windows
+    )
+)
+set "LDFLAGS="
+echo Cleared GNU LDFLAGS for cl.exe sanity check
+
 :: flang_rt import libs live under clang resource dir; MSVC link needs LIBPATH
 :: (LNK1104: cannot open file 'flang_rt.runtime.dynamic.lib' otherwise).
 set "FLANG_RT_DIR="
