@@ -9,6 +9,8 @@ source:
   - url: https://github.com/TheochemUI/eOn/releases/download/v${{ version }}/eon-v${{ version }}.tar.xz
     # Published asset from TheochemUI/eOn v3.2.0 (release.yml fat tarball).
     sha256: b459d183d91a15b7aa6fbcf40c2b06e8e93239c77105172c51da0b5a584fdf46
+    patches:
+      - 0001-win-msvc-capnp-fi-after-project.patch
     # v2.16.0 targets readcon-core 0.13 in-tree (IoStatus API); the 0.12
     # builder-API patch (use_readcon_pkgconfig.patch) is upstream and dropped.
   - url: https://github.com/OmniPotentRPC/rgpot/archive/2811c366a15b648e97064b32aab6faf92ddc1d45.tar.gz
