@@ -13,12 +13,11 @@ source:
       - 0001-win-msvc-capnp-fi-after-project.patch
     # v2.16.0 targets readcon-core 0.13 in-tree (IoStatus API); the 0.12
     # builder-API patch (use_readcon_pkgconfig.patch) is upstream and dropped.
-  - url: https://github.com/OmniPotentRPC/rgpot/archive/2811c366a15b648e97064b32aab6faf92ddc1d45.tar.gz
-    sha256: ef3b60bfa03daf0a8cd2add244b9c3b01cfe9d8cda319a6b179953a9a5f55c12
+  - url: https://github.com/OmniPotentRPC/rgpot/archive/7c2752343731818c7ac5b2d386e38c68304b5062.tar.gz
+    sha256: 7751d4b05a4468ea3415037f5b52f7b0236d680458d0ef69c17906d9c8666f26
     target_directory: subprojects/rgpot
-    # eOn 3.2.0 wrap tracks feat/force-batch-impl: RgpotAdapter::forceBatch
-    # needs ForceBatch / forceBatchImpl. No rgpot tag carries those symbols.
-    # 2811c366 is that branch tip.
+    # RgpotAdapter::forceBatch needs ForceBatch / forceBatchImpl. This
+    # immutable upstream merge carries those symbols.
   # readcon-core C-API built with cargo-c; crate deps resolve from crates.io
   # pinned by the upstream Cargo.lock (same pattern as the readcon-core
   # staged recipe).
