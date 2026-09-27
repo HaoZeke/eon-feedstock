@@ -1,5 +1,5 @@
 context:
-  version: "3.2.1"
+  version: "3.3.1"
 
 package:
   name: eon
@@ -7,21 +7,20 @@ package:
 
 source:
   - url: https://github.com/TheochemUI/eOn/releases/download/v${{ version }}/eon-v${{ version }}.tar.xz
-    # Published asset from TheochemUI/eOn v3.2.1 (release.yml fat tarball).
-    sha256: 85b5ed37659c6183cad6a15b41507217f8d5c5807d8a2b79c13fcbbfdc8c18f1
-    patches:
-      - 0001-win-msvc-capnp-fi-after-project.patch
+    # Published asset from TheochemUI/eOn v3.3.1 (release.yml fat tarball).
+    # The MSVC capnp force-include is upstream (msvc_capnp_guard.h).
+    sha256: 568a898bf6e8515eb7267e82c2cbd7542f908cd1882443ec1bf72b8fc66e8dcd
     # v2.16.0 targets readcon-core 0.13 in-tree (IoStatus API); the 0.12
     # builder-API patch (use_readcon_pkgconfig.patch) is upstream and dropped.
   - url: https://github.com/OmniPotentRPC/rgpot/archive/refs/tags/v3.2.0.tar.gz
     sha256: 0bde596baad1741b79fef62e647ff7641725034d798bf346459cd274c4f451c7
     target_directory: subprojects/rgpot
-    # eOn 3.2.1 wrap is rgpot v3.2.0.
+    # eOn 3.3.1 wrap is rgpot v3.2.0.
   # readcon-core C-API built with cargo-c; crate deps resolve from crates.io
   # pinned by the upstream Cargo.lock (same pattern as the readcon-core
   # staged recipe).
-  - url: https://github.com/lode-org/readcon-core/archive/refs/tags/v0.14.10.tar.gz
-    sha256: 6b0b136e1285c3fb7832420143edd0597dadbf973f907796721b906252466e92
+  - url: https://github.com/lode-org/readcon-core/archive/refs/tags/v0.14.11.tar.gz
+    sha256: 3967db105fd5fd3219bc784c904d274848f8d1b5d1930128165171ddeb0f26c6
     target_directory: readcon-core-src
 
 build:
