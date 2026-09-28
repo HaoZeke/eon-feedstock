@@ -91,6 +91,9 @@ requirements:
         - liblapacke
     - quill
     - capnproto
+    # eOn prefers an installed nlohmann_json over its wrap; taking the header
+    # from $PREFIX keeps a build host's /usr/include out of the sysroot build.
+    - nlohmann_json
     - if: osx
       then: llvm-openmp
   run:
