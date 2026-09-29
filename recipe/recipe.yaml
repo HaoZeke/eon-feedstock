@@ -1,5 +1,5 @@
 context:
-  version: "3.3.1"
+  version: "3.4.0"
 
 package:
   name: eon
@@ -7,15 +7,15 @@ package:
 
 source:
   - url: https://github.com/TheochemUI/eOn/releases/download/v${{ version }}/eon-v${{ version }}.tar.xz
-    # Published asset from TheochemUI/eOn v3.3.1 (release.yml fat tarball).
+    # Published asset from TheochemUI/eOn v3.4.0 (release.yml fat tarball).
     # The MSVC capnp force-include is upstream (msvc_capnp_guard.h).
-    sha256: 568a898bf6e8515eb7267e82c2cbd7542f908cd1882443ec1bf72b8fc66e8dcd
+    sha256: 61b0ca55db32c17b7fb556a630af2008c877a51d69bb748b87ada17aef40d88c
     # v2.16.0 targets readcon-core 0.13 in-tree (IoStatus API); the 0.12
     # builder-API patch (use_readcon_pkgconfig.patch) is upstream and dropped.
-  - url: https://github.com/OmniPotentRPC/rgpot/archive/refs/tags/v3.2.0.tar.gz
-    sha256: 0bde596baad1741b79fef62e647ff7641725034d798bf346459cd274c4f451c7
+  - url: https://github.com/OmniPotentRPC/rgpot/archive/refs/tags/v3.3.0.tar.gz
+    sha256: fc844ecaaca72157a5c674e6c84c483a136163515e348ba57ae7a83e8d678fa5
     target_directory: subprojects/rgpot
-    # eOn 3.3.1 wrap is rgpot v3.2.0.
+    # eOn 3.4.0 wrap is rgpot v3.3.0.
   # readcon-core C-API built with cargo-c; crate deps resolve from crates.io
   # pinned by the upstream Cargo.lock (same pattern as the readcon-core
   # staged recipe).
